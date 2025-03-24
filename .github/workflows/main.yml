@@ -1,0 +1,19 @@
+name: Prevent Direct Commits to Main
+
+on:
+  push:
+    branches:
+      - main  # Altere para 'master' se essa for sua branch principal
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar se o commit é direto na branch principal
+        run: |
+          if [ "$GITHUB_EVENT_HEAD_COMMIT_AUTHOR" != "$GITHUB_ACTOR" ] || [ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"Merge pull request"* ]; then
+            echo "✅ Commit permitido (via PR ou merge)."
+          else
+            echo "❌ Commits diretos na branch principal não são permitidos!"
+            exit 1
+          fi
